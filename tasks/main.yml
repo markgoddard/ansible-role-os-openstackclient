@@ -1,13 +1,18 @@
 ---
+- name: Include OS family-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
 - name: Ensure EPEL repo is installed
   yum:
     name: epel-release
     state: installed
   become: True
-  when: os_openstackclient_install_epel | bool
+  when:
+    - ansible_os_family == 'RedHat'
+    - os_openstackclient_install_epel | bool
 
 - name: Ensure required packages are installed
-  yum:
+  package:
     name: "{{ item }}"
     state: installed
   become: True
